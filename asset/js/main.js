@@ -34,15 +34,14 @@ function isLengthError(input, min, max) {
 function isErrorMail(input) {
   const regex =
     /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-  if (isLengthError(input)) {
-    showError(input, "Khong duoc bo trong");
-    return true;
-  }
   if (regex.test(input.value.trim())) {
     showSuccess(input);
     return false;
-  } else {
+  } else if (!regex.test(input.value.trim()) && input.value.trim() != "") {
     showError(input, "Email khong hop le");
+    return true;
+  } else {
+    showError(input, "Khong duoc bo trong");
     return true;
   }
 }
@@ -51,9 +50,13 @@ function isErrorPasswordMatch(password, confirmPassword) {
   if (password.value != confirmPassword.value) {
     showError(confirmPassword, "Mat khau khong trung khop");
     return true;
+  } else if (
+    password.value === confirmPassword.value &&
+    password.value === ""
+  ) {
+    showError(confirmPassword, "");
   } else {
     showSuccess(confirmPassword);
-    return false;
   }
 }
 clearAll.addEventListener("click", (e) => {
@@ -67,7 +70,6 @@ form.addEventListener("submit", (e) => {
   e.preventDefault();
   isLengthError(formInputName, 5, 50);
   isLengthError(formInputPassword, 5, 50);
-  isLengthError(formInputMail, 5, 50);
   isErrorMail(formInputMail);
   isErrorPasswordMatch(formInputPassword, formInputConfirm);
 });
